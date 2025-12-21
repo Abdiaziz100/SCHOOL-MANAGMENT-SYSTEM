@@ -1,0 +1,115 @@
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  background: #ffffff;
+  border-right: 1px solid #e6eaf0;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 12px;
+  font-family: "Inter", sans-serif;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+}
+
+/* Logo section */
+.logo {
+  text-align: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eef1f6;
+}
+
+.logo-icon {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+
+.logo h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.logo span {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* Nav */
+.nav {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.nav-item {
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: #374151;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Hover */
+.nav-item:hover {
+  background: #f1f5f9;
+}
+
+/* Active (blue highlight) */
+.nav-item.active {
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid #eef1f6;
+}
+
+.user-info {
+  padding: 8px 14px;
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.logout-btn {
+  width: 100%;
+  padding: 8px 14px;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 6px;
+  color: #374151;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.logout-btn:hover {
+  background: #e5e7eb;
+}
+
+.theme-toggle {
+  width: 100%;
+  padding: 8px 14px;
+  background: #667eea;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 8px;
+}
+
+.theme-toggle:hover {
+  background: #5a67d8;
+}
