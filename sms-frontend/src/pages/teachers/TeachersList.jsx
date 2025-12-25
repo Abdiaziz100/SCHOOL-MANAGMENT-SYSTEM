@@ -52,7 +52,7 @@ export default function TeachersList() {
           onChange={e => setForm({ ...form, subject: e.target.value })}
         />
 
-        <button type="submit">Save</button>
+        <button type="submit">{form.id ? 'Update' : 'Save'}</button>
         <button type="button" onClick={() => setForm({ id: '', name: '', subject: '' })}>Reset</button>
       </form>
 

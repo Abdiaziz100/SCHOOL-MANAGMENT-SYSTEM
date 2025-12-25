@@ -68,7 +68,7 @@ export default function ClassesList() {
           ))}
         </select>
 
-        <button type="submit">Save</button>
+        <button type="submit">{form.id ? 'Update' : 'Save'}</button>
         <button type="button" onClick={() => setForm({ id: "", name: "", teacher_id: "" })}>
           Reset
         </button>

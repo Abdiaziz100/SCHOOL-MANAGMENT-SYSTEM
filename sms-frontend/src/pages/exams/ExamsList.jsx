@@ -1,34 +1,45 @@
 import React, { useEffect, useState } from 'react';
-import { getJSON } from '../../api';
+import { getJSON, postJSON, putJSON, del } from '../../api';
 
 export default function ExamsList() {
   const [exams, setExams] = useState([]);
   const [classes, setClasses] = useState([]);
-  const [form, setForm] = useState({ name: '', class_id: '', date: '', duration: '', total_marks: '' });
+  const [form, setForm] = useState({ id: '', name: '', class_id: '', date: '', duration: '', total_marks: '' });
 
   async function load() {
     setClasses(await getJSON('/classes'));
-    // Mock exams data
-    setExams([
-      { id: 1, name: 'Mid Term Math', class_id: 1, date: '2024-02-15', duration: 120, total_marks: 100 },
-      { id: 2, name: 'Final English', class_id: 2, date: '2024-03-20', duration: 180, total_marks: 150 }
-    ]);
+    setExams(await getJSON('/exams'));
   }
 
   useEffect(() => { load(); }, []);
 
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault();
-    const newExam = {
-      id: Date.now(),
+    const payload = {
       name: form.name,
       class_id: parseInt(form.class_id),
       date: form.date,
       duration: parseInt(form.duration),
       total_marks: parseInt(form.total_marks)
     };
-    setExams([...exams, newExam]);
-    setForm({ name: '', class_id: '', date: '', duration: '', total_marks: '' });
+
+    if (form.id) {
+      await putJSON(`/exams/${form.id}`, payload);
+    } else {
+      await postJSON('/exams', payload);
+    }
+    setForm({ id: '', name: '', class_id: '', date: '', duration: '', total_marks: '' });
+    load();
+  }
+
+  function edit(e) {
+    setForm({ id: e.id, name: e.name, class_id: e.class_id, date: e.date, duration: e.duration, total_marks: e.total_marks });
+  }
+
+  async function remove(id) {
+    if (!window.confirm("Delete this exam?")) return;
+    await del(`/exams/${id}`);
+    load();
   }
 
   return (
@@ -72,12 +83,13 @@ export default function ExamsList() {
           onChange={e => setForm({ ...form, total_marks: e.target.value })}
           required
         />
-        <button type="submit">Save</button>
+        <button type="submit">{form.id ? 'Update' : 'Save'}</button>
+        <button type="button" onClick={() => setForm({ id: '', name: '', class_id: '', date: '', duration: '', total_marks: '' })}>Reset</button>
       </form>
 
       <table className="data-table">
         <thead>
-          <tr><th>ID</th><th>Name</th><th>Class</th><th>Date</th><th>Duration</th><th>Total Marks</th></tr>
+          <tr><th>ID</th><th>Name</th><th>Class</th><th>Date</th><th>Duration</th><th>Total Marks</th><th>Actions</th></tr>
         </thead>
         <tbody>
           {exams.map(e => (
@@ -88,6 +100,10 @@ export default function ExamsList() {
               <td>{e.date}</td>
               <td>{e.duration} min</td>
               <td>{e.total_marks}</td>
+              <td>
+                <button className="action-btn edit" onClick={() => edit(e)}>Edit</button>
+                <button className="action-btn delete" onClick={() => remove(e.id)}>Delete</button>
+              </td>
             </tr>
           ))}
         </tbody>

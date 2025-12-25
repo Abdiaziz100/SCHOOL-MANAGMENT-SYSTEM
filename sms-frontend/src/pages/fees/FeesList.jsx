@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getJSON } from '../../api';
+import { getJSON, postJSON, del } from '../../api';
 
 export default function FeesList() {
   const [students, setStudents] = useState([]);
@@ -8,28 +8,27 @@ export default function FeesList() {
 
   async function load() {
     setStudents(await getJSON('/students'));
-    // Mock fees data
-    setFees([
-      { id: 1, student_id: 1, amount: 500, type: 'tuition', status: 'paid', date: '2024-01-15' },
-      { id: 2, student_id: 2, amount: 300, type: 'library', status: 'pending', date: '2024-01-20' }
-    ]);
+    setFees(await getJSON('/fees'));
   }
 
   useEffect(() => { load(); }, []);
 
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault();
-    const newId = fees.length > 0 ? Math.max(...fees.map(f => f.id)) + 1 : 1;
-    const newFee = {
-      id: newId,
+    await postJSON('/fees', {
       student_id: parseInt(form.student_id),
       amount: parseFloat(form.amount),
       type: form.type,
-      status: form.status,
-      date: new Date().toISOString().split('T')[0]
-    };
-    setFees([...fees, newFee]);
+      status: form.status
+    });
     setForm({ student_id: '', amount: '', type: 'tuition', status: 'pending' });
+    load();
+  }
+
+  async function remove(id) {
+    if (!window.confirm("Delete this fee record?")) return;
+    await del(`/fees/${id}`);
+    load();
   }
 
   return (
@@ -76,7 +75,7 @@ export default function FeesList() {
 
       <table className="data-table">
         <thead>
-          <tr><th>ID</th><th>Student</th><th>Amount</th><th>Type</th><th>Status</th><th>Date</th></tr>
+          <tr><th>ID</th><th>Student</th><th>Amount</th><th>Type</th><th>Status</th><th>Date</th><th>Actions</th></tr>
         </thead>
         <tbody>
           {fees.map(f => (
@@ -89,6 +88,9 @@ export default function FeesList() {
                 <span className={`status ${f.status}`}>{f.status}</span>
               </td>
               <td>{f.date}</td>
+              <td>
+                <button className="action-btn delete" onClick={() => remove(f.id)}>Delete</button>
+              </td>
             </tr>
           ))}
         </tbody>

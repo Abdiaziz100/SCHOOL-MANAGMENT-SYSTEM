@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getJSON } from '../../api';
+import { getJSON, postJSON, del } from '../../api';
 
 export default function SalaryList() {
   const [teachers, setTeachers] = useState([]);
@@ -8,27 +8,28 @@ export default function SalaryList() {
 
   async function load() {
     setTeachers(await getJSON('/teachers'));
-    setSalaries([
-      { id: 1, teacher_id: 1, amount: 3000, month: 'January', year: 2024, status: 'paid' },
-      { id: 2, teacher_id: 2, amount: 2800, month: 'January', year: 2024, status: 'pending' }
-    ]);
+    setSalaries(await getJSON('/salaries'));
   }
 
   useEffect(() => { load(); }, []);
 
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault();
-    const newId = salaries.length > 0 ? Math.max(...salaries.map(s => s.id)) + 1 : 1;
-    const newSalary = {
-      id: newId,
+    await postJSON('/salaries', {
       teacher_id: parseInt(form.teacher_id),
       amount: parseFloat(form.amount),
       month: form.month,
       year: parseInt(form.year),
       status: form.status
-    };
-    setSalaries([...salaries, newSalary]);
+    });
     setForm({ teacher_id: '', amount: '', month: '', year: '', status: 'pending' });
+    load();
+  }
+
+  async function remove(id) {
+    if (!window.confirm("Delete this salary record?")) return;
+    await del(`/salaries/${id}`);
+    load();
   }
 
   return (
@@ -83,7 +84,7 @@ export default function SalaryList() {
 
       <table className="data-table">
         <thead>
-          <tr><th>ID</th><th>Teacher</th><th>Amount</th><th>Month</th><th>Year</th><th>Status</th></tr>
+          <tr><th>ID</th><th>Teacher</th><th>Amount</th><th>Month</th><th>Year</th><th>Status</th><th>Actions</th></tr>
         </thead>
         <tbody>
           {salaries.map(s => (
@@ -95,6 +96,9 @@ export default function SalaryList() {
               <td>{s.year}</td>
               <td>
                 <span className={`status ${s.status}`}>{s.status}</span>
+              </td>
+              <td>
+                <button className="action-btn delete" onClick={() => remove(s.id)}>Delete</button>
               </td>
             </tr>
           ))}

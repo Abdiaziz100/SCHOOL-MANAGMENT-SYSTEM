@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getJSON } from '../../api';
+import { getJSON, postJSON, del } from '../../api';
 
 export default function TeacherAttendanceList() {
   const [teachers, setTeachers] = useState([]);
@@ -10,31 +10,28 @@ export default function TeacherAttendanceList() {
 
   async function load() {
     setTeachers(await getJSON('/teachers'));
-    setRecords([
-      { id: 1, teacher_id: 1, date: '2024-01-15', status: 'present' },
-      { id: 2, teacher_id: 2, date: '2024-01-15', status: 'absent' }
-    ]);
+    setRecords(await getJSON('/teacher-attendance'));
   }
 
   useEffect(() => { load(); }, []);
 
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault();
-    const newRecord = {
-      id: Date.now(),
+    await postJSON('/teacher-attendance', {
       teacher_id: parseInt(teacher_id),
       date: date,
       status: status
-    };
-    setRecords([...records, newRecord]);
+    });
     setDate('');
     setTeacherId('');
     setStatus('present');
+    load();
   }
 
-  function remove(id) {
+  async function remove(id) {
     if (!window.confirm("Delete attendance record?")) return;
-    setRecords(records.filter(r => r.id !== id));
+    await del(`/teacher-attendance/${id}`);
+    load();
   }
 
   return (

@@ -3,38 +3,35 @@ import { getJSON, postJSON, putJSON, del } from '../../api';
 
 export default function SubjectsList() {
   const [subjects, setSubjects] = useState([]);
-  const [form, setForm] = useState({ id: '', name: '', code: '', credits: '' });
+  const [form, setForm] = useState({ id: '', name: '', code: '', description: '' });
 
   async function load() {
-    // Mock data since backend doesn't have subjects endpoint
-    setSubjects([
-      { id: 1, name: 'Mathematics', code: 'MATH101', credits: 3 },
-      { id: 2, name: 'English', code: 'ENG101', credits: 2 },
-      { id: 3, name: 'Science', code: 'SCI101', credits: 4 }
-    ]);
+    setSubjects(await getJSON('/subjects'));
   }
 
   useEffect(() => { load(); }, []);
 
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault();
-    const newSubject = {
-      id: Date.now(),
-      name: form.name,
-      code: form.code,
-      credits: parseInt(form.credits)
-    };
-    setSubjects([...subjects, newSubject]);
-    setForm({ id: '', name: '', code: '', credits: '' });
+    const payload = { name: form.name, code: form.code, description: form.description };
+
+    if (form.id) {
+      await putJSON(`/subjects/${form.id}`, payload);
+    } else {
+      await postJSON('/subjects', payload);
+    }
+    setForm({ id: '', name: '', code: '', description: '' });
+    load();
   }
 
   function edit(s) {
-    setForm({ id: s.id, name: s.name, code: s.code, credits: s.credits });
+    setForm({ id: s.id, name: s.name, code: s.code, description: s.description || '' });
   }
 
-  function remove(id) {
+  async function remove(id) {
     if (!window.confirm("Delete this subject?")) return;
-    setSubjects(subjects.filter(s => s.id !== id));
+    await del(`/subjects/${id}`);
+    load();
   }
 
   return (
@@ -55,19 +52,17 @@ export default function SubjectsList() {
           required
         />
         <input
-          type="number"
-          placeholder="Credits"
-          value={form.credits}
-          onChange={e => setForm({ ...form, credits: e.target.value })}
-          required
+          placeholder="Description"
+          value={form.description}
+          onChange={e => setForm({ ...form, description: e.target.value })}
         />
-        <button type="submit">Save</button>
-        <button type="button" onClick={() => setForm({ id: '', name: '', code: '', credits: '' })}>Reset</button>
+        <button type="submit">{form.id ? 'Update' : 'Save'}</button>
+        <button type="button" onClick={() => setForm({ id: '', name: '', code: '', description: '' })}>Reset</button>
       </form>
 
       <table className="data-table">
         <thead>
-          <tr><th>ID</th><th>Name</th><th>Code</th><th>Credits</th><th>Actions</th></tr>
+          <tr><th>ID</th><th>Name</th><th>Code</th><th>Description</th><th>Actions</th></tr>
         </thead>
         <tbody>
           {subjects.map(s => (
@@ -75,7 +70,7 @@ export default function SubjectsList() {
               <td>{s.id}</td>
               <td>{s.name}</td>
               <td>{s.code}</td>
-              <td>{s.credits}</td>
+              <td>{s.description}</td>
               <td>
                 <button className="action-btn edit" onClick={() => edit(s)}>Edit</button>
                 <button className="action-btn delete" onClick={() => remove(s.id)}>Delete</button>
