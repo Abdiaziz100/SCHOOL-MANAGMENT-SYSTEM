@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { getJSON, postJSON, putJSON, del } from '../../api';
+import SearchBar from '../../components/SearchBar';
 
 export default function ExamsList() {
   const [exams, setExams] = useState([]);
   const [classes, setClasses] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [form, setForm] = useState({ id: '', name: '', class_id: '', date: '', duration: '', total_marks: '' });
+
+  const filteredExams = exams.filter(exam => 
+    exam.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    classes.find(c => c.id === exam.class_id)?.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   async function load() {
     setClasses(await getJSON('/classes'));
@@ -45,6 +52,12 @@ export default function ExamsList() {
   return (
     <div>
       <h2>📝 Exams</h2>
+      
+      <SearchBar 
+        searchTerm={searchTerm} 
+        setSearchTerm={setSearchTerm} 
+        placeholder="Search exams or classes..." 
+      />
 
       <form className="mini-form" onSubmit={submit}>
         <input
@@ -92,7 +105,7 @@ export default function ExamsList() {
           <tr><th>ID</th><th>Name</th><th>Class</th><th>Date</th><th>Duration</th><th>Total Marks</th><th>Actions</th></tr>
         </thead>
         <tbody>
-          {exams.map(e => (
+          {filteredExams.map(e => (
             <tr key={e.id}>
               <td>{e.id}</td>
               <td>{e.name}</td>

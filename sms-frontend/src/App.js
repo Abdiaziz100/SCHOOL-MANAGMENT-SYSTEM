@@ -9,12 +9,14 @@ import TeachersList from './pages/teachers/TeachersList';
 import ClassesList from './pages/classes/ClassesList';
 import AttendanceList from './pages/attendance/AttendanceList';
 import TeacherAttendanceList from './pages/teacher-attendance/TeacherAttendanceList';
-import AssignmentsList from './pages/assignments/AssignmentsList';
 import SubjectsList from './pages/subjects/SubjectsList';
 import FeesList from './pages/fees/FeesList';
 import SalaryList from './pages/salary/SalaryList';
 import ExamsList from './pages/exams/ExamsList';
 import GradesList from './pages/grades/GradesList';
+import Reports from './pages/reports/Reports';
+import Timetable from './pages/timetable/Timetable';
+import Announcements from './pages/announcements/Announcements';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -35,13 +37,15 @@ function App() {
       case 'attendance': return <AttendanceList />;
       case 'teacher-attendance': return <TeacherAttendanceList />;
       case 'teachers': return <TeachersList />;
-      case 'assignments': return <AssignmentsList />;
       case 'subjects': return <SubjectsList />;
       case 'classes': return <ClassesList />;
       case 'fees': return <FeesList />;
       case 'salary': return <SalaryList />;
       case 'exams': return <ExamsList />;
       case 'grades': return <GradesList />;
+      case 'reports': return <Reports />;
+      case 'timetable': return <Timetable />;
+      case 'announcements': return <Announcements />;
       default: return <Dashboard />;
     }
   };

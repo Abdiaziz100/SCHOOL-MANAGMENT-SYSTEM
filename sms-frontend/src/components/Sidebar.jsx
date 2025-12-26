@@ -10,13 +10,15 @@ export default function Sidebar({ activeTab, setActiveTab, user, onLogout }) {
     { id: 'attendance', label: 'Student Attendance' },
     { id: 'teacher-attendance', label: 'Teacher Attendance' },
     { id: 'teachers', label: 'Teachers' },
-    { id: 'assignments', label: 'Student Assignments' },
     { id: 'subjects', label: 'Subjects' },
     { id: 'classes', label: 'Classes & Sections' },
     { id: 'fees', label: 'Fees Management' },
-    { id: 'salary', label: 'Salary Payment' },
+    { id: 'salary', label: 'Teachers Salary' },
     { id: 'exams', label: 'Exams' },
-    { id: 'grades', label: 'Grades' }
+    { id: 'grades', label: 'Grades' },
+    { id: 'reports', label: 'Reports' },
+    { id: 'timetable', label: 'Timetable' },
+    { id: 'announcements', label: 'Announcements' }
   ];
 
   return (
@@ -29,13 +31,13 @@ export default function Sidebar({ activeTab, setActiveTab, user, onLogout }) {
 
       <nav className="nav">
         {navItems.map(item => (
-          <a
+          <button
             key={item.id}
             className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
             onClick={() => setActiveTab(item.id)}
           >
             {item.label}
-          </a>
+          </button>
         ))}
       </nav>
 
